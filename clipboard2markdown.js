@@ -48,7 +48,7 @@
     {
       filter: 'hr',
       replacement: function () {
-        return '\n\n* * * * *\n\n';
+        return '\n\n* * *\n\n';
       }
     },
 
@@ -132,7 +132,46 @@
   };
 
   var convert = function (str) {
-    return escape(toMarkdown(str, { converters: pandoc, gfm: true }));
+
+    var turndownService = new TurndownService({
+      headingStyle: 'atx',
+      codeBlockStyle: 'fenced',
+      strongDelimiter: '**'
+    });
+
+    turndownService.addRule('HandleCiteAndVar', {
+      filter: ['em', 'i', 'cite', 'var'],
+      replacement: function (content) {
+        return '*' + content + '*';
+      }
+    })
+
+    turndownService.addRule('bold', {
+      filter: ['strong', 'b'],
+      replacement: function (content) {
+        return '**' + content + '**'
+      }
+    })
+
+    turndownService.addRule('bold2', {
+      filter: function (node) {
+        if (node.nodeName === 'SPAN' && node.style["font-weight"]){
+          var fontWeight = node.style["font-weight"];
+          if (fontWeight === "bold") { return true; };
+          if (!isNaN(fontWeight) && parseInt(fontWeight) >= 600) { return true; };
+        };
+        return false;
+      },
+      replacement: function (content, node) {
+        return '**' + content + '**';
+      }
+    },)
+
+    var gfm = turndownPluginGfm.gfm;
+    turndownService.use(gfm);
+    console.log(str);
+    return escape(turndownService.turndown(str));
+    //return escape(toMarkdown(str, { converters: pandoc, gfm: true }));
   }
 
   var insert = function (myField, myValue) {
