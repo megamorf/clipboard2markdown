@@ -14,7 +14,7 @@ Demo
 
 ### Interactive
 
-<http://euangoddard.github.io/clipboard2markdown/>
+<https://megamorf.github.io/clipboard2markdown/>
 
 ### Video
 
