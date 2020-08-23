@@ -146,14 +146,14 @@
       }
     })
 
-    turndownService.addRule('bold', {
-      filter: ['strong', 'b'],
-      replacement: function (content) {
-        return '**' + content + '**'
-      }
-    })
+    /*
+    Copying text from a website often converts <strong> tags to span elements with
+    an inline style that contains the font-weight attribute:
+    https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight#Syntax
 
-    turndownService.addRule('bold2', {
+    Treat as bold If the font-weight value is either "bold" or a number >= 600
+    */
+    turndownService.addRule('HandleBoldTextWithoutProperTags', {
       filter: function (node) {
         if (node.nodeName === 'SPAN' && node.style["font-weight"]){
           var fontWeight = node.style["font-weight"];
